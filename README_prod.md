@@ -23,6 +23,6 @@ IMAGE_WORKER='zad2:worker'
 
 ## Zrzut ekranu
 
-![Zrzut ekranu](./Screenshots/etap_prdukcyjny.png)
+![Zrzut ekranu](./Screenshots/etap_produkcyjny.png)
 
 kontener client wykorzystuje serwer nginx.
