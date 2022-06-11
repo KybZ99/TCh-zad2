@@ -1,0 +1,78 @@
+version: '3'
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - "node.role == manager"
+  redis:
+    image: 'redis:latest'
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS}
+  nginx:
+    depends_on:
+      - api
+      - client
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    image: "${REGISTRY_ADDR}/${REGISTRY_USER}/${IMAGE_NGINX}"
+    ports:
+      - '3050:80'
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS}
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+    image: "${REGISTRY_ADDR}/${REGISTRY_USER}/${IMAGE_API}"
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS}
+      restart_policy:
+        condition: any
+  client:
+    stdin_open: true
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    image: "${REGISTRY_ADDR}/${REGISTRY_USER}/${IMAGE_CLIENT}"
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS}
+  worker:
+    build:
+      dockerfile: Dockerfile
+      context: ./worker
+    image: "${REGISTRY_ADDR}/${REGISTRY_USER}/${IMAGE_WORKER}"
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - NODE_OPTIONS=--openssl-legacy-provider
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS}
