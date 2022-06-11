@@ -22,7 +22,6 @@ IMAGE_WORKER='zad2:worker'
 `docker compose up`
 
 ## Zrzut ekranu
-
 ![Zrzut ekranu](./Screenshots/etap_produkcyjny.png)
 
-kontener client wykorzystuje serwer nginx.
+Kontener client wykorzystuje serwer nginx.

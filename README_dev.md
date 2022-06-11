@@ -9,4 +9,4 @@
 ## Zrzut ekranu
 ![Zrzut ekranu](./Screenshots/etap_rozwoju.png)
 
-kontener client korzysta z serwera webpack.
+Kontener client korzysta z serwera webpack.
